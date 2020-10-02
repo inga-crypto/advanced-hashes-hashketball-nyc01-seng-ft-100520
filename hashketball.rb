@@ -132,12 +132,14 @@ end
 def get_team(team_name)
   #for key, team in game_hash do
   game_hash.each do |key,team|
-    return team if team[:team_name] == team_name
+    if team[:team_name] == team_name
+      return team
+    end
   end
   return nil
 end
 
-def get_player(player_name)
+def player_stats(player_name)
   for key, team in game_hash do
     for player in team[:players] do
       return player if player[:player_name] == player_name
@@ -147,12 +149,12 @@ def get_player(player_name)
 end
 
 def num_points_scored(player_name)
-  player = get_player(player_name)
+  player = player_stats(player_name)
   player[:points] unless player.nil?
 end
 
 def shoe_size(player_name)
-  player = get_player(player_name)
+  player = player_stats(player_name)
   player[:shoe]
 end
 
@@ -161,3 +163,29 @@ def team_colors(team_name)
   team[:colors] unless team.nil?
 end
 
+def team_names
+  game_hash.map do |key, team|
+    team[:team_name]
+  end
+end
+
+def player_numbers(team_name)
+  team = get_team(team_name)
+  if team.nil? then
+    return
+  end
+  team[:players].map { |player| player[:number] }
+end
+
+def big_shoe_rebounds
+  teams = game_hash.values
+  all_players = teams.map {|team| team[:players] }.flatten
+  biggest = all_players.max_by {|player| player[:shoe] }
+  
+  # biggest = game_hash.values
+  #   .map {|team| team[:players] }
+  #   .flatten
+  #   .max_by {|player| player[:shoe] }
+  
+  biggest[:rebounds]
+end
